@@ -57,7 +57,7 @@
 
 \section{Bayesian inference in simple conjugate families}
 
-Bayesian inference for real scientific problems is like playing with Legos: elaborate creations arise from simple building blocks.  We start with a few of the simplest blocks: the beta/binomial, normal, and inverse-gamma conjugate families.
+We start with a few of the simplest building blocks for complex multivariate statistical models: the beta/binomial, normal, and inverse-gamma conjugate families.
 
 \begin{enumerate}[(A)]
 
@@ -79,7 +79,7 @@ Suppose that $x_1 \sim \mbox{Ga}(a_1,1)$ and that $x_2 \sim \mbox{Ga}(a_2,1)$.  
 $$
 p(x_i \mid \theta, \omega) = \left( \frac{\omega}{2 \pi} \right)^{1/2} \exp \left\{ -\frac{\omega}{2} (x_i - \theta)^2 \right\} \, .
 $$
-Suppose that $\omega$ has a gamma prior with parameters $a$ and $b$, implying that $\sigma^2$ has what is called an inverse-gamma prior.\footnote{Written $\sigma^2 \sim \mbox{IG}(a,b)$.}  Derive the posterior distribution $p(\omega \mid x_1, \ldots, x_N)$.  Re-express this as a posterior for $\sigma^2$, the variance, using the change-of-variables formula.
+Suppose that $\omega$ has a gamma prior with parameters $a$ and $b$, implying that $\sigma^2$ has what is called an inverse-gamma prior.\footnote{Written $\sigma^2 \sim \mbox{IG}(a,b)$.}  Derive the posterior distribution $p(\omega \mid x_1, \ldots, x_N)$.  Re-express this as a posterior for $\sigma^2$, the variance.
 
 \item Suppose that, as above, we take independent observations $x_1, \ldots, x_N$ from a normal sampling model with unknown, common mean $\theta$.  This time, however, each observation has its own idiosyncratic (but known) variance: $x_i \sim \mbox{N}(\theta, \sigma_i^2)$.  Suppose that $\theta$ is given a normal prior distribution with mean $m$ and variance $v$.  Derive the posterior distribution $p(\theta \mid x_1, \ldots, x_N)$.  Express the posterior mean in a form that is clearly interpretable as a weighted average of the observations and the prior mean.
 
@@ -105,7 +105,7 @@ Here's an alternative characterization of the univariate normal distribution in 
 
 \item First, some simple moment identities.  The covariance matrix $\mbox{cov}(x)$ of a vector-valued random variable $x$ is defined as the matrix whose $(i,j)$ entry is the covariance between $x_i$ and $x_j$.  In matrix notation, $\mbox{cov}(x) = E\{ (x - \mu) (x - \mu)^T \}$, where $\mu$ is the mean vector whose $i$th component is $E(x_i)$.  Prove the following: (1) $\mbox{cov}(x) = E(xx^T) - \mu \mu^T$; and (2) $\mbox{cov}(Ax + b) = A \mbox{cov}(x) A^T$ for matrix $A$ and vector $b$.
 
-\item Consider the random vector $z = (z_1, \ldots, z_p)^T$, with each entry having an independent standard normal distribution (that is, mean 0 and variance 1).  Derive the moment-generating function (MGF) of $z$, expressed in vector notation (i.e.~no explicit summing).\footnote{Remember that the MGF of a vector-valued random variable $x$ is the expected value of the quantity $\exp(t^T x)$, as a function of the vector argument $t$.}  Use the MGF to compute the probability density function (PDF) of $z$.  We say that $z$ has a standard multivariate normal distribution.
+\item Consider the random vector $z = (z_1, \ldots, z_p)^T$, with each entry having an independent standard normal distribution (that is, mean 0 and variance 1).  Derive the moment-generating function (MGF) of $z$, expressed in vector notation.\footnote{Remember that the MGF of a vector-valued random variable $x$ is the expected value of the quantity $\exp(t^T x)$, as a function of the vector argument $t$.}  Use the MGF to compute the probability density function (PDF) of $z$.  We say that $z$ has a standard multivariate normal distribution.
 
 \item We say that a vector-valued random variable $x = (x_1, \ldots, x_p)^T$ has a multivariate normal distribution if and only if its moment generating function is of the form
 $$
@@ -115,11 +115,9 @@ for vector $\mu$ and symmetric, positive-semidefinite matrix $\Sigma$.  Notice t
 
 A basic theorem is that a random vector is multivariate normal if and only if it is a linear combination of independent univariate normals.  You will first prove the ``if'' statement.  Let $z$ have a standard multivariate normal distribution, and define the random vector $x = L z + \mu$ for some $p \times p$ matrix $L$ of full column rank.   Prove that $x$ is multivariate normal.  In addition, use the moment identities you proved above to compute the mean and covariance matrix of $x$.  
 
-\item Now for the ``only if.''  Suppose that $x$ has a multivariate normal distribution.  Prove that $x$ can be written as a linear transformation of standard normal random variables.  (Note: a good way to prove that something can be done is to do it!  That is, write the explicit linear combination giving rise to $x$.  The previous part may suggest a simple way to write $\Sigma$ such that this becomes straightforward.)
+\item Now for the ``only if.''  Suppose that $x$ has a multivariate normal distribution.  Prove that $x$ can be written as a linear transformation of standard normal random variables.  (Note: a good way to prove that something can be done is to do it!)  Use this result to construct an algorithm for simulating multivariate normal random variables with a specified mean and covariance matrix, and code it up in R.\footnote{For the rest of this course, when I say R, you should feel free to substitute your own favorite language.}  You may use built-in routines for drawing univariate normals, and for performing any relevant matrix operations.  (This should be a short code snippet; if you find youself writing something long, rethink your approach.)  Then play around!  Use your code to simulate 1000 draws or so from a few different bivariate normals of your choice (I suggest bivariate so you can plot the results, but feel free to work with a higher-dimensional choice if you wish.)
 
-\item Use this result to construct an algorithm for simulating multivariate normal random variables, and code it up in R.\footnote{For the result of this course, when I say R, you should feel free to substitute your own favorite language.}  You may use built-in routines for drawing univariate normals, and for performing any relevant matrix operations.  (This should be a very short code snippet; if you find youself writing something long, rethink your approach.)  Then play around!  Use your code to simulate 1000 draws or so from a few different bivariate normals of your choice.  The covariance matrix of the bivariate normal has only two variance parameters and a single covariance parameter to specify.
-
-\item Use your result, together with the PDF of a univariate normal, to derive the PDF of a multivariate normal $x \sim \N(\mu, \Sigma)$ as $p(x) = C \exp\{-Q(x)/2\}$ for some constant $C$ and quadratic form $Q(x)$.
+\item Use your result, together with the PDF of a univariate normal, to show that the PDF of a multivariate normal $x \sim \N(\mu, \Sigma)$ takes the form $p(x) = C \exp\{-Q(x)/2\}$ for some constant $C$ and quadratic form $Q(x)$.
 
 %\item Let $x$ be as above and suppose that $y = A x$, where $A$ is an $n \times p$ matrix of full column rank (i.e.~its columns are linearly independent).  Compute the MGF of $y$.  If $n < p$, what the PDF of $y$?  If $n>p$, why can we not write down the PDF of $y$?\footnote{This doesn't make it an invalid distribution!  It is perfectly valid, and is usually referred to as the singular normal distribution---singular in the sense of a square matrix that lacks an inverse.}
 
@@ -144,9 +142,9 @@ Clearly $\Sigma_{21} = \Sigma_{12}^T$, as $\Sigma$ is a symmetric matrix.
 
 \begin{enumerate}[(A)]
 
-\item You have shown that linear transformations of $x$ are normal.   Use this to characterize the marginal distribution of $x_1$.
+\item Derive the marginal distribution of $x_1$. (Remember your result about linear transformations.)
 
-\item Derive the conditional distribution for $x_1$, assuming that the elements of $x_2$ are known.  There are multiple approaches here.  If you decide to use Bayes' rule and brute force, there are several keys to inner peace: work with densities on a log scale, ignore constants that don't affect $x_1$, and expand the quadratic form in $p(x)$ in terms of the partitioned elements of $x$, $\mu$, and $\Sigma$.\footnote{Also remember the cute trick of completing the square from basic algebra.  In scalar form:
+\item Derive the conditional distribution for $x_1$, given $x_2$, in terms of the partitioned elements of $x$, $\mu$, and $\Sigma$.  There are multiple approaches here.  If you decide to use Bayes' rule, there are several keys to inner peace: work with densities on a log scale, ignore constants that don't affect $x_1$, and remember the cute trick of completing the square from basic algebra.\footnote{In scalar form:
 \begin{eqnarray*}
 x^2 - 2bx + c &=& x^2 - 2bx + b^2 - b^2 + c \\
 &=& (x-b)^2 - b^2 + c \, .
@@ -189,7 +187,12 @@ Here $p_i(y_i \mid \sigma^2)$ is the conditional probability density function of
 \item[Method of moments:] Choose $\hat{\beta}$ so that the sample covariance between the errors and each of the $p$ predictors is exactly zero.  This gives you a system of $p$ equations and $p$ unknowns.
 \end{description}
 
-Show that all three of these principles lead to the same estimator.  You will end up tearing your hair out if you try to deal with sums of scalar quantities.  Thus convert everything to matrix-vector notation.  This means exploiting results on moments of linear combinations of random variables, and---for (2)---appealing to the multivariate normal distribution.
+Show that all three of these principles lead to the same estimator.  You will end up tearing your hair out if you try to deal with sums of scalar quantities.  Thus convert everything to matrix-vector notation.\footnote{Remember your basic results on moments of linear combinations of random variables, and the following two identities on derivatives of linear and quadratic forms:
+\begin{eqnarray*}
+\frac{\partial (a^Tx)}{\partial x} &=& a \\
+\frac{\partial (x^T A x)}{\partial x} &=& (A + A^T) x \, .
+\end{eqnarray*}
+}
 
 \newpage
 
@@ -206,9 +209,11 @@ $$
 
 \begin{enumerate}[(A)]
 
-\item What is the sampling distribution of the estimator for $\beta$ that you just derived?
+\item Derive the sampling distribution of your estimator for $\beta$ from the previous problem.
 
-\item Your answer depends on $\sigma^2$, but this is unknown.  Suppose you wanted to quantify your uncertainty about $\beta_1$, the first regression coefficient.  How would you proceed?
+\item This sampling distribution depends on $\sigma^2$, yet this is unknown.  Suppose that you still wanted to quantify your uncertainty about the individual regression coefficients.  Propose a strategy for calculating standard errors for each $\beta_j$.  Then consult the data set on ozone concentration in Los Angeles, where the goal is to regress daily ozone concentration on a set of other atmospheric variables.  This is available from the R package ``mlbench,'' with my R script ``ozone.R'' giving you a head start on processing things.
+
+Calculate standard errors using your method, and then using the pre-packaged lm function in R.  Note: you may have an essentially correct strategy for calculating standard errors that yields something slightly different from the lm function.  If so, that's OK---can you explain the discrepancy?
 
 \end{enumerate}
 
@@ -216,9 +221,7 @@ $$
 
 If you're unfamiliar with the idea of the bootstrap, consult my tutorial on sampling distributions, along with the review paper by Efron and Gong entitled ``A Leisurely Look at the Bootstrap, the Jackknife, and Cross-Validation.''  The basic idea is to simulate the process of repeated sampling from the population by re-sampling from your sample (with replacement).  The ties and duplicates in your ``bootstrapped samples'' will mimic the sampling variability of the true data-generating process.
 
-Consult the data set on ozone concentration in Los Angeles, where the goal is to regress daily ozone concentration on a set of other atmospheric variables.  This is available from the R package ``mlbench,'' with my R script ``ozone.R'' giving you a head start on processing things.
-
-Use your estimator to fit a linear model for ozone concentration (after subtracting the mean) versus the other variables.  Compute the covariance matrix of the sampling distribution of your estimator.
+Let $\hat{\Sigma}$ denote the covariate matrix of the sampling distribution of $\hat{\beta}$.  Write an R function that will estimate $\hat{\Sigma}$ via bootstrapped resampling for a given design matrix $X$ and response vector $y$.  Use it to compute $\hat{\Sigma}$ for the ozone data set, and compare it to the parametric estimate based on normal theory.
 
 \subsection{Propagating uncertainty}
 

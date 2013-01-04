@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=pdflatex 2008.12.28)  3 JAN 2013 17:44
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=pdflatex 2008.12.28)  4 JAN 2013 12:32
 entering extended mode
 \write18 enabled.
  %&-line parsing enabled.
@@ -771,7 +771,7 @@ LaTeX Warning: Marginpar on page 3 moved.
 LaTeX Warning: Marginpar on page 3 moved.
 
 [3]
-Overfull \hbox (3.61711pt too wide) in alignment at lines 154--154
+Overfull \hbox (3.61711pt too wide) in alignment at lines 152--152
  [][][] []
  []
 
@@ -779,6 +779,9 @@ Overfull \hbox (3.61711pt too wide) in alignment at lines 154--154
 LaTeX Warning: Marginpar on page 4 moved.
 
 [4]
+
+LaTeX Warning: Marginpar on page 5 moved.
+
 
 LaTeX Warning: Marginpar on page 5 moved.
 
@@ -793,13 +796,13 @@ Package bibentry Warning: You have used \nobibliography*
 
 (./exercises01-SSC384D.aux) ) 
 Here is how much of TeX's memory you used:
- 10303 strings out of 493876
- 143331 string characters out of 1150567
- 327857 words of memory out of 3000000
- 13281 multiletter control sequences out of 10000+50000
- 56590 words of font info for 96 fonts, out of 3000000 for 5000
+ 10347 strings out of 493876
+ 144107 string characters out of 1150567
+ 328857 words of memory out of 3000000
+ 13311 multiletter control sequences out of 10000+50000
+ 62620 words of font info for 111 fonts, out of 3000000 for 5000
  714 hyphenation exceptions out of 8191
- 46i,13n,45p,756b,484s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 46i,14n,45p,1033b,484s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/local/texlive/2008/texmf-dist/fonts/enc/dvip
 s/base/8r.enc}</usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmex10
 .pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmr10.pfb></usr
@@ -812,9 +815,9 @@ nts/type1/public/bera/fvmr8a.pfb></usr/local/texlive/2008/texmf-dist/fonts/type
 1/urw/palatino/uplb8a.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw/p
 alatino/uplr8a.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw/palatino
 /uplri8a.pfb>
-Output written on exercises01-SSC384D.pdf (7 pages, 123284 bytes).
+Output written on exercises01-SSC384D.pdf (7 pages, 124160 bytes).
 PDF statistics:
- 138 PDF objects out of 1000 (max. 8388607)
- 37 named destinations out of 1000 (max. 131072)
- 1069 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 134 PDF objects out of 1000 (max. 8388607)
+ 36 named destinations out of 1000 (max. 131072)
+ 8749 words of extra memory for PDF output out of 10000 (max. 10000000)
 
