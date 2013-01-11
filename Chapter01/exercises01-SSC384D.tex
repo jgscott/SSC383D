@@ -178,17 +178,31 @@ $$
 $$
 \hat{\beta} = \arg \max_{\beta \in \mathcal{R}^p} \left\{ \prod_{i=1}^n p(y_i \mid \beta, \sigma^2) \right\} \, .
 $$
-Here $p_i(y_i \mid \sigma^2)$ is the conditional probability density function of $y_i$, given the model parameters $\beta$ and $\sigma^2$.  Two side points: 1) Why a product? 2) Why I have I not written $\hat{\beta}$ explicitly as a function of $\sigma^2$, which is unknown and appears on the right-hand side?
+Here $p_i(y_i \mid \sigma^2)$ is the conditional probability density function of $y_i$, given the model parameters $\beta$ and $\sigma^2$.
 
 \item[Method of moments:] Choose $\hat{\beta}$ so that the sample covariance between the errors and each of the $p$ predictors is exactly zero.  This gives you a system of $p$ equations and $p$ unknowns.
 \end{description}
 
-Show that all three of these principles lead to the same estimator.  You will end up tearing your hair out if you try to deal with sums of scalar quantities.  Thus convert everything to matrix-vector notation.\footnote{Remember your basic results on moments of linear combinations of random variables, and the following two identities on derivatives of linear and quadratic forms:
+\begin{enumerate}[(A)]
+
+\item Show that all three of these principles lead to the same estimator.\footnote{You will end up tearing your hair out if you try to deal with sums of scalar quantities.  Thus convert everything to matrix-vector notation.  Remember your basic results on moments of linear combinations of random variables, and the following two identities on derivatives of linear and quadratic forms:
 \begin{eqnarray*}
 \frac{\partial (a^Tx)}{\partial x} &=& a \\
 \frac{\partial (x^T A x)}{\partial x} &=& (A + A^T) x \, .
 \end{eqnarray*}
 }
+
+\item Now suppose you trust some observations more than others, and will estimate $\beta$ by minimizing the weighted sum of squared errors,
+$$
+\hat{\beta} = \arg \min_{\beta \in \mathcal{R}^p} \left\{  \sum_{i=1}^n w_i (y_i - x_i^T \beta)^2 \right\}  \, ,
+$$
+where the $w_i$ are weights.  (Trustworthy observations have large weights.)  Derive this estimator, and show that it corresponds to the maximum-likelihood solution under \textit{heteroscedastic} Gaussian error:
+$$
+\hat{\beta} = \arg \max_{\beta \in \mathcal{R}^p} \left\{ \prod_{i=1}^n p(y_i \mid \beta, \sigma_i^2) \right\} \, .
+$$
+Make sure you explicitly connect the weights $w_i$ and the idiosyncratic variances $\sigma^2_i$.
+
+\end{enumerate}
 
 \newpage
 
