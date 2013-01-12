@@ -3,17 +3,22 @@
 %\geometry{showframe}% for debugging purposes -- displays the margins
 
 \newcommand{\E}{\mbox{E}}
+\newcommand{\MSE}{\mbox{MSE}}
+\newcommand{\var}{\mbox{var}}
 
-\usepackage{amsmath}
+\usepackage{amsmath,amssymb,amsfonts,amsthm} % amsmath package, useful for mathematical formulas
 %\usepackage[garamond]{mathdesign}
 \usepackage{url}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
 
 % Set up the images/graphics package
 \usepackage{graphicx}
 \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
 \graphicspath{{graphics/}}
 
-\title[Exercises 2 $\cdot$ SSC 383D]{Exercises 2: Fitting curves by smoothing}
+\title[Exercises 2 $\cdot$ SSC 383D]{Exercises 2: Introduction to smoothing}
 %\author[ ]{ }
 \date{}  % if the \date{} command is left out, the current date will be used
 
@@ -55,33 +60,108 @@
 
 \maketitle% this prints the handout title, author, and date
 
-\section{Linear smoothing: one predictor}
+\begin{abstract}
+For the next several weeks, we'll consider two age-old problems.
 
-Let's consider a problem with one predictor and one response, but a potentially more general regression function: $y_i = f(x_i) + \epsilon_i$.
+\begin{description}
+\item[Density estimation:] Given a sample $x_1, \ldots, x_n$ from some distribution $P$, estimate the probability density function $p$.
+
+\item[Regression:] Given pairs $(x_1, y_1), \ldots, (x_n, y_n)$ where $y_i = f(x_i) + \epsilon_i$, with $E(\epsilon_i) = 0$, estimate the regression function $f$.
+\end{description}
+This set of exercises will kick us off.
+
+
+
+\end{abstract}
+
+\section{Basic concepts}
+
+\subsection{Bias--variance decomposition}
+
+Let $\hat{f}(x)$ be a noisy estimate of some function $f(x)$, evaluated at some point $x$.  Define the mean-squared error of the estimate as
+$$
+\MSE(\hat{f}, f) = \E\{ [ f(x) - \hat{f}(x)]^2 \} \, .
+$$
+Prove that $\MSE(f, \hat{f}) = B^2 + v$, where
+$$
+B = \E \{ \hat{f}(x) \} - f(x) \quad \mbox{and} \quad V = \var\{ \hat{f}(x) \} \, .
+$$
+
+\subsection{A simple example}
+
+Some people refer to the above decomposition as the \textit{bias--variance tradeoff.}  Why a tradeoff?  Here's a simple example to convey the intuition.
+
+Suppose we observe $x_1, \ldots, x_n$ from some distribution $F$, and want to estimate $f(0)$, the value of the probability density function at 0.  Let $h$ be a small positive number, called the \textit{bandwidth}, and define the quantity
+$$
+\pi_h = P\left( -\frac{h}{2} < X < \frac{h}{2} \right) = \int_{-h/2}^{h/2} f(x) dx \, .
+$$
+Clearly $\pi_h \approx h f(0)$.
+
+\begin{enumerate}[(A)]
+\item Let $Y$ be the number of observations in a sample of size $n$ that fall within the interval $(-h/2, h/2)$.  What is the distribution of $Y$?  What are its mean and variance in terms of $n$ and $\pi_h$?  Propose a simple estimator $\hat{f}(0)$ involving $Y$.
+\item Suppose we expand $f(x)$ in a second-order Taylor series about $0$:
+$$
+f(x) \approx f(0) + x f'(0) + \frac{x^2}{2} f''(0) \, .
+$$
+Use this in the above expression for $\pi_h$, together with the bias--variance decomposition, to show that
+$$
+\MSE\{ \hat{f}(0), f(0) \} \approx A h^4 + \frac{B}{nh}
+$$
+for constants $A$ and $B$ that you should (approximately) specify.  What happens to the bias and variance when you make $h$ small?  When you make $h$ big?
+
+\item Use this result to derive an expression for the bandwidth that minimizes mean-squared error, as a function of $n$.  You can approximate any constants that appear, but make sure you get the right functional dependence on the sample size.
+
+\end{enumerate}
+
+
+%Use this to prove the following theorem.
+%\begin{theorem}
+%Let $x$ be fixed, and suppose that $f'(x)$ is absolutely continuous and that $\int (f'(u))^2 du < \infty$.
+%\end{theorem}
+%These steps will walk you through it.
+%\begin{enumerate}
+%\item Observe that, by Taylor's theorem, for any $x$ and $u$ in $B_j$,
+%$$
+%f(u) = f(x) + (u-x) f'(x) + \frac{(u-x)^2}{2} f''(\tilde{x})
+%$$
+%for some $\tilde{x}$ between $x$ and $u$.  Use this fact to show that
+%$$
+%p_j = h f(x) + h f'(x) \left( h(j-1/2) - x \right) + O(h^3) \, .
+%$$
+%\item From this, show that the bias of $\hat{f}(x)$ is
+%$$
+%
+%$$
+%\end{enumerate}
+
+
+\section{Curve fitting by linear smoothing}
+
+Consider a nonlinear regression problem with one predictor and one response: $y_i = f(x_i) + \epsilon_i$, where the $\epsilon_i$ are mean-zero random variables.
 
 \begin{enumerate}[(A)]
 \item Suppose we want to estimate the value of the regression function $y^{\star}$ at some new point $x^\star$, denoted $\hat{f}(x^{\star})$.  Assume for the moment that $f(x)$ is linear, and that $y$ and $x$ have already had their means subtracted, in which case $y_i = \beta x_i + \epsilon_i$.
 
-Return to your least-squares estimator for multiple regression.  Show that for the one-predictor case, your prediction for $y^{\star} = \hat{\beta} x^{\star}$ may be expressed as a \textit{linear smoother}\footnote{This doesn't mean the weight function $w(\cdot)$ is linear in its argument, but rather than the new prediction is a linear combination of the past outcomes.} of the following form:
+Return to your least-squares estimator for multiple regression.  Show that for the one-predictor case, your prediction $\hat{y}^{\star} = f(x^{\star}) = \hat{\beta} x^{\star}$ may be expressed as a \textit{linear smoother}\footnote{This doesn't mean the weight function $w(\cdot)$ is linear in its argument, but rather than the new prediction is a linear combination of the past outcomes $y_i$.} of the following form:
 $$
-\hat{f}(x^{\star}) = \sum_{i=1}^n w(x_i, x^{\star}) y_i \, 
+\hat{f}(x^{\star}) = \frac{\sum_{i=1}^n w(x_i, x^{\star}) y_i }{\sum_{i=1}^n w(x_i, x^{\star})}  \, 
 $$
-for any $x^{\star}$.  Inspect the weighting function you derived.  Briefly describe your understanding of how the resulting smoother would behave, compared with that arising from an alternate form of the weight function $w(x_i, x^{\star})$:
+for any $x^{\star}$.  Inspect the weighting function you derived.  Briefly describe your understanding of how the resulting smoother behaves, compared with the smoother that arises from an alternate form of the weight function $w(x_i, x^{\star})$:
 $$
 w_K(x_i, x^{\star}) = \left \{
 \begin{array}{l l}
-1/K, & \mbox{$x_i$ one of the $K$ closest sample points to $x^{\star}$} \\
+1/K, & \mbox{$x_i$ one of the $K$ closest sample points to $x^{\star}$} \, ,\\
 0, & \mbox{otherwise.} \\
 \end{array}
 \right.
 $$
 This is referred to as \textit{K-nearest-neighbor smoothing}.
 
-\item A \textit{kernel function} $K(x)$ is any smooth function satisyfing
+\item A \textit{kernel function} $K(x)$ is a smooth function satisyfing
 $$
-K(x) \geq 0 \; , \quad \int_\mathbb{R} K(x) dx = 1 \; , \quad \int_\mathbb{R} x K(x) dx = 0 \; , \quad \int_\mathbb{R} x^2 K(x) dx > 0 \, .
+\int_\mathbb{R} K(x) dx = 1 \; , \quad \int_\mathbb{R} x K(x) dx = 0 \; , \quad \int_\mathbb{R} x^2 K(x) dx > 0 \, .
 $$
-A kernel function is therefore like a probability density function with mean $0$.  A very simple example is the uniform kernel,
+A very simple example is the uniform kernel,
 $$
 K(x) = \frac{1}{2} I(x) \quad \mbox{where} \quad I(x) = 
 \left\{
@@ -98,49 +178,37 @@ $$
 
 Kernels are used as weighting functions for taking local averages.  Specifically, define the weighting function
 $$
-w_b(x_i, x^{\star}) = \frac{ K \left( \frac{x_i - x^{\star}}{b} \right) }{\sum_{j=1}^n  K \left( \frac{x_j - x^{\star}}{b} \right)  } \, ,
+w(x_i, x^{\star}) = \frac{1}{h} K \left( \frac{x_i - x^{\star}}{h} \right)  \, ,
 $$
-where $b$ is called the \textit{bandwidth}.   Using this weighting function in a linear smoother is called \textit{kernel regression}.  
+where $h$ is the bandwidth.    Using this weighting function in a linear smoother is called \textit{kernel regression}.
 
-Write your own R function that will fit a kernel smoother for an arbitrary set of $x$-$y$ pairs, and arbitrary choice of (positive real) bandwidth $b$.\footnote{Coding tip: write things in a modular way.  A kernel function is a function accepting a distance and a bandwidth and returning a nonnegative real.  A weighting function is a function that accepts a vector of previous $x$'s, a new x, and a kernel function; and that returns a vector of weights.  Et cetera.  You will appreciate your foresight in writing modular code later in the course!}  Set up an R script that will simulate noisy data from some nonlinear function $y = f(x) + \mbox{error}$; subtract the sample means from the simulated $x$ and $y$; and use your function to fit the smoother for some choice of $b$.  Plot the prediction functions over a range of bandwidths large enough to yield noticeable changes in the qualitative behavior of the prediction functions.
+Write your own R function that will fit a kernel smoother for an arbitrary set of $x$-$y$ pairs, and arbitrary choice of (positive real) bandwidth $h$.\footnote{Coding tip: write things in a modular way.  A kernel function is a function accepting a distance and a bandwidth and returning a nonnegative real.  A weighting function is a function that accepts a vector of previous $x$'s, a new x, and a kernel function; and that returns a vector of weights.  Et cetera.  You will appreciate your foresight in writing modular code later in the course!}  Set up an R script that will simulate noisy data from some nonlinear function, $y = f(x) + \epsilon$; subtract the sample means from the simulated $x$ and $y$; and use your function to fit the kernel smoother for some choice of $h$.  Plot the estimated functions for a range of bandwidths large enough to yield noticeable changes in the qualitative behavior of the prediction functions.
 
 \end{enumerate}
 
+\section{Cross validation}
 
-\section{Choosing the bandwidth parameter}
-
-\subsection{Cross validation}
-
-Again, we're in the one-predictor domain where $y_i = f(x_i) + \epsilon_i$.  Left unanswered in the previous problem about linear smoothing was the question: how does one choose the bandwidth $b$?  Assume for now that the goal is to predict well, not necessarily to recover the truth.  (These are related but distinct goals.)  
+Left unanswered so far in our previous study of kernel regression is the question: how does one choose the bandwidth $h$ used for the kernel?  Assume for now that the goal is to predict well, not necessarily to recover the truth.  (These are related but distinct goals.)  
 
 \begin{enumerate}[(A)]
 
-\item Why not just choose $b$ to minimize the sum of squared errors for the observed data set?
+\item Why not just choose $h$ to minimize the sum of squared errors for the observed data set?
 
-\item Let $y$ be the (unknown) response at some future point $x$.  Let $\hat{f}$ be an estimator of the true function $f$ based on previous data (i.e.~not including this $x$ and $y$).  Clearly $y = f(x) + \epsilon$ for some unknown error $\epsilon$, which has mean zero and variance $\sigma^2$.  Prove the following decomposition for the expected squared error in prediction:
-$$
-E \left\{ \left[ y - \hat{f}(x) \right]^2 \right\} =
-\sigma^2 + 
-\left[ f(x) - E \left\{  \hat{f} (x) \right\} \right]^2
-+   \mbox{var}\{ \hat{f}(x) \} \, .
-$$
-The term inside the expectation on the left-hand side is called the squared error, or risk, of the estimate.  All moments are taken under the sampling distribution for the data, given the true function $f$.  Briefly interpret each of the three summands on the right-hand side.  You should be able to explain why this is referred to as the \textit{bias--variance decomposition} of an estimator.\footnote{Some people call it the bias--variance tradeoff.  Why a tradeoff?}
+\item  What if you had a fresh data set where you could test your predictions arising from fitting the model to the first data set, with particular choices of $h$?  Presumably a good choice of $h$ would be one that led to smaller predictive errors.  This is called \textit{out-of-sample predictive validation}.
 
-\item  ``It would be great,'' you think to yourself, ``if I had a fresh data set where I could test my predictions arising from the first, with particular choices of $b$.''  Darn right!  This is called \textit{out-of-sample predictive validation}.
+Write a function or script that will: (1) accept an old (``training'') data set and a new (``testing'') data set as inputs; (2) fit the kernel-regression estimator to the training data for specified choices of $h$; and (3) return the estimated functions and the realized prediction error on the testing data for each value of $h$.  This should involve a fairly straightforward ``wrapper'' of the function you've already written.
 
-Write a function or script that will: (1) accept an old (``training'') data set and a new (``testing'') data set as inputs; (2) fit the Gaussian kernel smoother to the training data for specified choices of $b$; and (3) return the estimated functions and the realized prediction error on the testing data for each value of $b$.  Choose the estimate that minimizes the average squared error in prediction:
+\item Imagine a conceptual two-by-two table for the unknown, true state of affairs.  The rows of the table are ``wiggly function'' and ``smooth function,'' and the columns are ``highly noisy observations'' and ``not so noisy observations.''  Simulate one data set (say, 500 points) for each of the four cells of this table, where the $x$'s take values in the unit interval.  Then split each data set into training and testing subsets.  You choose the functions.\footnote{Trigonometric functions, for example, can be pretty wiggly if you make the period small.}   Apply your method to each case, using the testing data to select a bandwidth parameter.  Choose the estimate that minimizes the average squared error in prediction, which estimates the mean-squared error:
 $$
 L_n(\hat{f}) = \frac{1}{n}\sum_{i=1}^{n^{\star}} (y^{\star}_i - \hat{y}_i^{\star} )^2 \, ,
 $$
-where $(y_i^{\star}, x_i^{\star})$ are the points in the test set, and $ \hat{y}_i^{\star}$ is your predicted value arising from a model fit to the training set.
+where $(y_i^{\star}, x_i^{\star})$ are the points in the test set, and $ \hat{y}_i^{\star}$ is your predicted value arising from the model you fit using only the training data.  Does your out-of-sample predictive validation method lead to reasonable choices of $h$ for each case?
 
-\item Imagine a conceptual two-by-two table for the unknown, true state of affairs.  The rows of the table are ``wiggly function'' and ``smooth function,'' and the columns are ``highly noisy observations'' and ``not so noisy observations.''  Simulate one data set (say, 500 points) for each of the four cells of this table, where the $x$'s take values in the unit interval.  Then split each data set into training and testing subsets.  You choose the functions.\footnote{Trigonometric functions, for example, can be pretty wiggly if you make the period small.}   Apply your method from above for each cell in the table, using the testing data to select a bandwidth parameter.  Does your out-of-sample predictive validation method lead to reasonable choices of $b$ for each case?
-
-\item Splitting a data set into two chunks to choose $b$ by out-of-sample validation has some drawbacks.  List at least two.  Then consider an alternative: leave-one-out cross validation.  Define
+\item Splitting a data set into two chunks to choose $h$ by out-of-sample validation has some drawbacks.  List at least two.  Then consider an alternative: leave-one-out cross validation.  Define
 $$
 \mbox{LOOCV} = \sum_{i=1}^n \left( y_i - \hat{y}_{i}^{(-i)} \right)^2 \, ,
 $$
-where $\hat{y}_{i}^{(-i)} $ is the predicted value of $y_i$ obtained by omitting the $i$th pair and fitting the model to the reduced data set.\footnote{The intuition here is straightforward: for each possible choice of $b$, you have to predict each data point using all the others.  The bandwidth that with the lowest prediction error is the ``best'' choice by the LOOCV criterion.}  This is contingent upon a particular bandwidth, and is obviously a function of $x_i$, but these dependencies are suppressed for notational ease.  This looks expensive to compute: for each value of $b$, and for each data point to be held out, fit a whole nonlinear regression model.  But you will derive a shortcut!
+where $\hat{y}_{i}^{(-i)} $ is the predicted value of $y_i$ obtained by omitting the $i$th pair and fitting the model to the reduced data set.\footnote{The intuition here is straightforward: for each possible choice of $h$, you have to predict each data point using all the others.  The bandwidth that with the lowest prediction error is the ``best'' choice by the LOOCV criterion.}  This is contingent upon a particular bandwidth, and is obviously a function of $x_i$, but these dependencies are suppressed for notational ease.  This looks expensive to compute: for each value of $h$, and for each data point to be held out, fit a whole nonlinear regression model.  But you will derive a shortcut!
 
 Observe that for a linear smoother, we can write the whole vector of fitted values as $\hat{y} = H y$, where $H$ is called the smoothing matrix (or ``hat matrix'') and $y$ is the vector of observed outcomes.\footnote{Remember that in multiple linear regression this is also true: $$\hat{y} = X \hat{\beta} = X (X^T X)^{-1} X^T y = Hy \, .$$}  Write $\hat{y}_i$ in terms of $H$ and $y$, and show that $\hat{y}_i^{(-i)} = \hat{y}_i - H_{ii} y_i + H_{ii} \hat{y}_i^{(-i)}$.  Deduce that, for a linear smoother,
 $$
@@ -150,19 +218,21 @@ $$
 
 \end{enumerate}
 
+
+
 \section{Local polynomial regression}
 
 \begin{enumerate}[(A)]
 
-\item Suppose we observe pairs $(x_i, y_i)$ for $i = 1, \ldots, n$ from our new favorite model, $y_i = f(x_i) + \epsilon_i$ and wish to estimate the value of the underlying function $f(x)$ at some point $x$ by weighted least squares.  This is the scalar\footnote{Because we are only talking about the value of the function at a specific point $x$, not the whole function.} quantity
+\item Kernel regression has a nice interpretation as a ``locally constant'' estimator, obtained from locally weighted least squares.  To see this, suppose we observe pairs $(x_i, y_i)$ for $i = 1, \ldots, n$ from our new favorite model, $y_i = f(x_i) + \epsilon_i$ and wish to estimate the value of the underlying function $f(x)$ at some point $x$ by weighted least squares.  Our estimate is the scalar\footnote{Because we are only talking about the value of the function at a specific point $x$, not the whole function.} quantity
 $$
-\hat{f}(x) = a = \arg \min_{\mathbb{R}} \sum_{i=1}^n w_i (y_i - a)^2 \, .
+\hat{f}(x) = a = \arg \min_{\mathbb{R}} \sum_{i=1}^n w_i (y_i - a)^2 \, ,
 $$
-Clearly if $w_i = 1/n$, the estimate is simply $\bar{y}$, the sample mean, which is the ``best'' globally constant estimator.  Show (using elementary calculus) that if the weights are
+where the $w_i$ are the normalized weights (i.e.~they have been rescaled to sum to 1 for fixed $x$).  Clearly if $w_i = 1/n$, the estimate is simply $\bar{y}$, the sample mean, which is the ``best'' globally constant estimator.  Show (using elementary calculus) that if the unnormalized weights are
 $$
-w_i \equiv w(x, x_i) = \frac{ K \left( \frac{x_i - x}{b} \right) }{\sum_{j=1}^n  K \left( \frac{x_j - x}{b} \right)  } \, ,
+w_i \equiv w(x, x_i) = \frac{1}{h} K \left( \frac{x_i - x}{h} \right)  \, ,
 $$
-then the solution is exactly the kernel-regression estimator.  This gives a nice interpretation of kernel regression as locally constant estimator, obtained from locally weighted least squares.
+then the solution is exactly the kernel-regression estimator.
 
 \item  A natural generalization of locally constant regression is local polynomial regression.  For points $u$ in a neighborhood of the target point $x$, define the polynomial
 $$
@@ -172,7 +242,7 @@ for some vector of coefficients $a = (a_0, \ldots, a_D)$.  As above, we will est
 $$
 \hat{a} = \arg \min_{R^{D+1}} \sum_{i=1}^n w_i \left\{ y_i - g_{x}(x_i; a)  \right\}^2 \, ,
 $$
-where $w_i \equiv w(x_i, x)$ are kernel weights defined just above.  (Note that $\hat{a}$ obviously depends on the target point $x$, but we have suppressed this dependence for notational ease.) Derive a concise (matrix) form of the weight vector $\hat{a}$, and by extension, the local function estimate $\hat{f}(x)$ at the target value $x$.\footnote{Observe that at $x$, $g_x(u; a) = a_0$.}   Life will be easier if you define the matrix $R_x$ whose $(i,j)$ entry is $(x_i-x)^{j-1}$, and remember that (weighted) polynomial regression is the same thing as (weighted) linear regression with a polynomial basis.
+where $w_i \equiv w(x_i, x)$ are the kernel weights defined just above, normalized to sum to 1.  (Note that $\hat{a}$ obviously depends on the target point $x$, but we have suppressed this dependence for notational ease.) Derive a concise (matrix) form of the weight vector $\hat{a}$, and by extension, the local function estimate $\hat{f}(x)$ at the target value $x$.\footnote{Observe that at $x$, $g_x(u; a) = a_0$.}   Life will be easier if you define the matrix $R_x$ whose $(i,j)$ entry is $(x_i-x)^{j-1}$, and remember that (weighted) polynomial regression is the same thing as (weighted) linear regression with a polynomial basis.
 
 \item From this, conclude that for the special case of the local linear estimator ($D=1$), we can write $\hat{f}(x)$ as a linear smoother of the form
 $$
@@ -186,83 +256,14 @@ s_j(x) &=& \sum_{i=1}^n K \left( \frac{x-x_i}{h} \right) (x_i-x)^j \, .
 
 \item What are the mean and variance of the sampling distribution for the local polynomial estimate $\hat{f}(x)$?  (Again, this is just a scalar quantity at $x$, not the whole function.)
 
-\item Write a new R function that fits the local linear estimator using a Gaussian kernel.  Write another wrapper function that uses leave-one-out cross-validation to choose a bandwidth parameter across a grid of possible choices.
+\item Write a new R function that fits the local linear estimator using a Gaussian kernel for a specified choice of bandwidth $h$. Then load the data in ``utilities.csv'' into R.  This data set shows the monthly gas bill (in dollars) for a single-family home in Minnesota, along with the average temperature in that month (in degrees F), and the number of billing days in that month.  Let $y$ be the average daily gas bill in a given month (i.e.~dollars divided by billing days), and let $x$ be the average temperature.  Fit $y$ versus $x$ using both the kernel-regression (locally constant) and local linear methods using a Gaussian kernel.  In each case, choose a bandwidth by leave-one-out cross-validation.
 
-Load the data in ``utilities.csv'' into R.  This data set shows the monthly gas bill (in dollars) for a single-family home in Minnesota, along with the average temperature in that month (in degrees F), and the number of billing days in that month.  Let $y$ be the average daily gas bill in a given month, and let $x$ be the average temperature.  Fit $y$ versus $x$ using both the kernel-regression (locally constant) and local linear methods, in each case using a Gaussian kernel and choosing the bandwidth by LOOCV.
+Inspect the results of the models you just fit, paying careful attention to the fit at the far-left and far-right ends of the $x$ axis.  Do you see a reason a prefer one method to the other?
 
-\item Inspect the results of the models you just fit, paying careful attention to the fit at the far-left and far-right ends of the $x$ axis.  Do you see a reason a prefer one method to the other?
-
-\item Use the results of Part D to construct an approximate point-wise 95\% confidence interval for the local linear model for the value of the function at each of the observed points $x_i$ for the utilities data.
+\item Use the results of Part D to construct an approximate point-wise 95\% confidence interval for the local linear model (using your chosen bandwidth) for the value of the function at each of the observed points $x_i$ for the utilities data.  Plot these confidence bands, along with the estimated function, on top of a scatter plot of the data.
 
 \end{enumerate}
 
-
-%\section{Some frequentist theory on bandwidth selection}
-%
-%Suppose that the present and future $x$'s are chosen at random from some density $h(x)$, and that the true function $f$ is twice differentiable.  Let $\sigma^2 = \mbox{var}(\epsilon)$.  Prove that, at some particular point $x$,
-%$$
-%E \left\{ \left[ y - \hat{f}(x) \right]^2 \right\} = \sigma^2 
-%  + h^4 (\tau^2)^2 \left\{ \frac{1}{2}  f''(x) + \frac{f'(x) \ h'(x)}{ h(x) } \right\}^2 + \frac{\sigma^2 \eta}{n b h(x)} + o(b^4) + o\left( \frac{1}{nb} \right)
-%$$
-%for some $\tau^2$ and $\eta$ that you must calculate.\footnote{Remember $O$ and $o$ notation.}
-%
-%In case the form of the right-hand side is insufficiently suggestive: try a second-order Taylor expansion.  This one is a bit technical.  To get you started, here's the flavor of the argument using a first-order Taylor expansion.  Expand $f(x_i)$ around the point $x$ where you want to predict:
-%$$
-%y_i = f(x) + (x-x_i) f'(x) + \epsilon_i \, .
-%$$
-%Now appeal to the fact that $\hat{f}$ is a linear smoother:
-%\begin{eqnarray*}
-%\hat{f}(x)  &=&  \sum_{i=1}^n w_i y_i \\
-%&=& \sum_{i=1}^n w_i \left\{  f(x) + (x-x_i) f'(x) + \epsilon_i \right\} \, ,
-%\end{eqnarray*}
-%abbreviating the weights as $w_i$.  Remember that the residuals are mean zero and uncorrelated with anything, and that the weights sum to 1.  Use this to calculate the bias and variance.
-%
-%Once you prove the result, consider some auxiliary questions.
-%
-%\begin{enumerate}[(A)]
-%\item Explain, intuitively, why the $h'(x)$ term enters the picture.
-%\item Use this expression to derive how the optimal choice of $b$ behaves in terms of the sample size $n$.
-%\item Explain what this choice of $b$ implies for the asymptotic behavior of the excess error in prediction,
-%$$
-%E \left\{ \left[ y - \hat{f}(x) \right]^2 \right\} - \sigma^2 \ .
-%$$
-%It converges to something.  What, and how fast in terms of $n$?
-%\item What barriers exist to the practical usage of this result?  Above you could ignore pesky constants that didn't grow or shrink with $n$.  Now think about what's involved in them.
-%\end{enumerate}
-%
-%
-%\newpage
-
-\section{A Bayesian version of linear smoothing}
-
-A \textit{Gaussian process} is a collection of random variables $\{f(x): x \in \mathcal{X}\}$ such that, for any finite collection of indices $x_1, \ldots, x_N \in \mathcal{X}$, the random vector $[f(x_1), \ldots, f(x_N)]^T$ has a multivariate normal distribution.  It is a generalization of the multivariate normal distribution to infinite-dimensional spaces. The set $\mathcal{X}$ is called the index set or the state space of the process, and need not be countable.
-
-A Gaussian process can be thought of as a random function defined over $\mathcal{X}$, often the real line or $\mathbb{R}^p$.  We write $f \sim \mbox{GP}(m, C)$ for some mean function $m: \mathcal{X} \rightarrow \mathbb{R}$ and a covariance function $C: \mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R}^+$.  These functions define the moments of finite-dimensional marginals of the process, in the sense that
-$$
-E\{ f(x_1) \} = m(x_1) \quad \mbox{and} \quad \mbox{cov}\{f(x_1), f(x_2) \} = C(x_1, x_2)
-$$
-for all $x_1, x_2 \in \mathcal{X}$.  More generally, the random vector $[f(x_1), \ldots, f(x_N)]^T$ has covariance matrix whose $(i,j)$ element is $C(x_i, x_j)$.  Typical covariance functions are those that decay as a function of increasing distance between points $x_1$ and $x_2$.  The notion is that $f(x_1)$ and $f(x_2)$ will have high covariance when $x_1$ and $x_2$ are close to each other.
-
-\begin{enumerate}[(A)]
-\item   Define the \textit{squared exponential} covariance function as
-$$
-C_{SE}(x_1, x_2) = \tau_1^2 \exp \left\{ - \frac{1}{2} \left( \frac{x_1 - x_2}{b} \right)^2 \right\} + \tau^2_2 \delta(x_1, x_2) \, ,
-$$
-where $(b, \tau^2_1, \tau^2_2)$ are constants (often called \textit{hyperparameters}), and where $\delta(a,b)$ is the Kronecker delta function that takes the value 1 if $a=b$, and 0 otherwise.
-
-Let's start with the simple case where $\mathcal{X} = [0,1]$, the unit interval.  Write an R function that simulates a mean-zero Gaussian process on $[0,1]$ under the squared-exponential covariance function.  The function will accept as arguments: (1) finite set of points $x_1, \ldots, x_N$ on the unit interval; and (2) a triplet $(b, \tau^2_1, \tau^2_2)$. It will return the value of the random process at each point: $f(x_1), \ldots, f(x_N)$.
-
-Use your function to simulate (and plot) Gaussian processes across a range of values for $b$, $\tau^2_1$, and $\tau^2_2$.  Try starting with a very small value of $\tau^2_2$ (say, $10^{-6}$) and playing around with the other two first.  On the basis of your experiments, describe the role of these three hyperparameters in controlling the overall behavior of the random functions that result.  What happens when you try $\tau^2_2 = 0$? Why?
-
-\item Suppose you observe the value of a Gaussian process $f \sim \mbox{GP}(m,C)$ at points $x_1, \ldots, x_N$.  What is the conditional distribution of the value of the process at some new point $x^{\star}$?  For the sake of notational ease simply write the value of the $(i,j)$ element of the covariance matrix as $C_{i,j}$, rather than expanding it in terms of a specific covariance function.
-
-\item \textit{A preliminary lemma.}  Suppose that the joint distribution of two vectors $y$ and $\theta$ has the following properties: (1) the conditional distribution for $y$ given $\theta$ is multivariate normal, $(y \mid \theta) \sim N(R\theta, \Sigma)$; and (2) the marginal distribution of $\theta$ is multivariate normal, $\theta \sim N(m,V)$.  Assume that $R$, $\Sigma$, $m$, and $V$ are all constants.  Prove that the joint distribution of $y$ and $\theta$ is multivariate normal.  What are its mean and covariance matrix?\footnote{Remember your result about linear combinations, and remember that if $a \sim N(b,C)$, then $a = b + e$ where $e \sim N(0, C)$.}
-
-\item Suppose we observe data $y_i = f(x_i) + \epsilon_i$, $\epsilon_i \sim N(0, \sigma^2)$, for some unknown function $f$. Suppose that the prior distribution for the unknown function is a mean-zero Gaussian process: $f \sim \mbox{GP}(0, C)$ for some covariance function $C$.  Let $x_1, \ldots, x_N$ denote the previously observed $x$ points.  Derive the posterior distribution for the random vector $[f(x_1), \ldots, f(x_N)]^T$, given the corresponding outcomes $y_1, \ldots, y_N$, assuming that you know $\sigma^2$.  (Use your lemma!)
-
-\item As before, suppose we observe data $y_i = f(x_i) + \epsilon_i$, $\epsilon_i \sim N(0, \sigma^2)$, for $i=1, \ldots, N$.  Now we wish to predict the value of the function $f(x^{\star})$ at some new point $x^{\star}$ where we haven't seen previous data.  Suppose that $f$ has a mean-zero Gaussian process prior, $f \sim GP(0, C)$.  Show that the posterior mean $E\{ f(x^{\star}) \mid y_1, \ldots, y_N \}$ is a linear smoother, and derive expressions both for the smoothing weights and the posterior variance of $f(x^{\star})$.
-
-\end{enumerate}
 
 \end{document}
 
