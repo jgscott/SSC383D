@@ -242,7 +242,7 @@ for some vector of coefficients $a = (a_0, \ldots, a_D)$.  As above, we will est
 $$
 \hat{a} = \arg \min_{R^{D+1}} \sum_{i=1}^n w_i \left\{ y_i - g_{x}(x_i; a)  \right\}^2 \, ,
 $$
-where $w_i \equiv w(x_i, x)$ are the kernel weights defined just above, normalized to sum to 1.  (Note that $\hat{a}$ obviously depends on the target point $x$, but we have suppressed this dependence for notational ease.) Derive a concise (matrix) form of the weight vector $\hat{a}$, and by extension, the local function estimate $\hat{f}(x)$ at the target value $x$.\footnote{Observe that at $x$, $g_x(u; a) = a_0$.}   Life will be easier if you define the matrix $R_x$ whose $(i,j)$ entry is $(x_i-x)^{j-1}$, and remember that (weighted) polynomial regression is the same thing as (weighted) linear regression with a polynomial basis.
+where $w_i \equiv w(x_i, x)$ are the kernel weights defined just above, normalized to sum to one.\footnote{We are fitting a different polynomial function for every possible choice of $x$.  Thus $\hat{a}$ depends on the target point $x$, but we have suppressed this dependence for notational ease.} Derive a concise (matrix) form of the weight vector $\hat{a}$, and by extension, the local function estimate $\hat{f}(x)$ at the target value $x$.\footnote{Observe that at $x$, $g_x(u; a) = a_0$.}   Life will be easier if you define the matrix $R_x$ whose $(i,j)$ entry is $(x_i-x)^{j-1}$, and remember that (weighted) polynomial regression is the same thing as (weighted) linear regression with a polynomial basis.
 
 \item From this, conclude that for the special case of the local linear estimator ($D=1$), we can write $\hat{f}(x)$ as a linear smoother of the form
 $$
