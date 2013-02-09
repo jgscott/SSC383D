@@ -104,7 +104,12 @@ Suppose that the joint distribution of two vectors $y$ and $\theta$ has the foll
 
 \item Return to the utilities data.  Fix $\tau^2_2 = 0$, and evaluate the log of the marginal likelihood function $p(y \mid \tau^2_1, b)$ over a discrete 2-d grid of points.  If you're getting errors in your code with $\tau^2_2 = 0$, use something very small instead.  Use this plot to choose a set of values $(\hat{\tau^2_1}, \hat{b})$ for the hyperparameters.  Then use these hyperparameters to compute the posterior mean for $f$, given $y$.
 
+\item In \verb|droslong.csv|, you will find a small subset of a time-course DNA microarray experiment.  The gene-expression profiles of 2000 different genes in the fruit fly (Drosophila) genome are tracked over time during embryogenesis; you are getting data on 14 of these genes, organized in three groups (think of these as marking which cellular pathway that gene influences).  For each gene at each time point, there are 3 ``technical replicates''---that is, three copies of the same biological material from the same fly, run through the same process to measure gene expression.
+
+The question of interest is: how does each gene's expression profile change over time, as the process of embryogenesis unfolds?  Propose a hierarchical model for this data that properly reflects its structure.
+
 \end{enumerate}
+
 
 \end{document}
 
