@@ -16,7 +16,7 @@
 \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
 \graphicspath{{graphics/}}
 
-\title[Exercises 3 $\cdot$ SSC 383D]{Exercises 3: A Bayesian version of linear smoothing}
+\title[Exercises 3 $\cdot$ SSC 383D]{Exercises 3: Gaussian processes}
 %\author[ ]{ }
 \date{}  % if the \date{} command is left out, the current date will be used
 
@@ -58,13 +58,11 @@
 
 \maketitle% this prints the handout title, author, and date
 
-\section{Gaussian processes}
-
-\subsection{Basics}
+\section{Basics}
 
 A \textit{Gaussian process} is a collection of random variables $\{f(x): x \in \mathcal{X}\}$ such that, for any finite collection of indices $x_1, \ldots, x_N \in \mathcal{X}$, the random vector $[f(x_1), \ldots, f(x_N)]^T$ has a multivariate normal distribution.  It is a generalization of the multivariate normal distribution to infinite-dimensional spaces. The set $\mathcal{X}$ is called the index set or the state space of the process, and need not be countable.
 
-A Gaussian process can be thought of as a random function defined over $\mathcal{X}$, often the real line or $\mathbb{R}^p$.  We write $f \sim \mbox{GP}(m, C)$ for some mean function $m: \mathcal{X} \rightarrow \mathbb{R}$ and a covariance function $C: \mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R}^+$.  These functions define the moments of finite-dimensional marginals of the process, in the sense that
+A Gaussian process can be thought of as a random function defined over $\mathcal{X}$, often the real line or $\mathbb{R}^p$.  We write $f \sim \mbox{GP}(m, C)$ for some mean function $m: \mathcal{X} \rightarrow \mathbb{R}$ and a covariance function $C: \mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R}^+$.  These functions define the moments\footnote{And therefore the entire distribution, because it is normal} of all finite-dimensional marginals of the process, in the sense that
 $$
 E\{ f(x_1) \} = m(x_1) \quad \mbox{and} \quad \mbox{cov}\{f(x_1), f(x_2) \} = C(x_1, x_2)
 $$
@@ -79,22 +77,20 @@ where $(b, \tau^2_1, \tau^2_2)$ are constants (often called \textit{hyperparamet
 
 Let's start with the simple case where $\mathcal{X} = [0,1]$, the unit interval.  Write an R function that simulates a mean-zero Gaussian process on $[0,1]$ under the squared-exponential covariance function.  The function will accept as arguments: (1) finite set of points $x_1, \ldots, x_N$ on the unit interval; and (2) a triplet $(b, \tau^2_1, \tau^2_2)$. It will return the value of the random process at each point: $f(x_1), \ldots, f(x_N)$.
 
-Use your function to simulate (and plot) Gaussian processes across a range of values for $h$, $\tau^2_1$, and $\tau^2_2$.  Try starting with a very small value of $\tau^2_2$ (say, $10^{-6}$) and playing around with the other two first.  On the basis of your experiments, describe the role of these three hyperparameters in controlling the overall behavior of the random functions that result.  What happens when you try $\tau^2_2 = 0$? Why?
+Use your function to simulate (and plot) Gaussian processes across a range of values for $h$, $\tau^2_1$, and $\tau^2_2$.  Try starting with a very small value of $\tau^2_2$ (say, $10^{-6}$) and playing around with the other two first.  On the basis of your experiments, describe the role of these three hyperparameters in controlling the overall behavior of the random functions that result.  What happens when you try $\tau^2_2 = 0$? Why?  If you can fix this, do---remember our earlier discussion on different ways to simulate the MVN.
 
 \item Suppose you observe the value of a Gaussian process $f \sim \mbox{GP}(m,C)$ at points $x_1, \ldots, x_N$.  What is the conditional distribution of the value of the process at some new point $x^{\star}$?  For the sake of notational ease simply write the value of the $(i,j)$ element of the covariance matrix as $C_{i,j}$, rather than expanding it in terms of a specific covariance function.
 
-\item Prove the following lemma.\footnote{Remember your result about linear combinations, and remember that if $a \sim N(b,C)$, then $a = b + e$ where $e \sim N(0, C)$.}
+\item Prove the following lemma.
 
 \begin{lemma}
 Suppose that the joint distribution of two vectors $y$ and $\theta$ has the following properties: (1) the conditional distribution for $y$ given $\theta$ is multivariate normal, $(y \mid \theta) \sim N(R\theta, \Sigma)$; and (2) the marginal distribution of $\theta$ is multivariate normal, $\theta \sim N(m,V)$.  Assume that $R$, $\Sigma$, $m$, and $V$ are all constants.  Then the joint distribution of $y$ and $\theta$ is multivariate normal.
 \end{lemma}
 
-What are the mean and covariance matrix of $p(\theta,y)$?
-
 \end{enumerate}
 
 
-\subsection{In nonparametric regression}
+\section{In nonparametric regression}
 
 \begin{enumerate}[(A)]
 
