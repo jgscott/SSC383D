@@ -94,11 +94,15 @@ Suppose that the joint distribution of two vectors $y$ and $\theta$ has the foll
 
 \begin{enumerate}[(A)]
 
-\item Suppose we observe data $y_i = f(x_i) + \epsilon_i$, $\epsilon_i \sim N(0, \sigma^2)$, for some unknown function $f$. Suppose that the prior distribution for the unknown function is a mean-zero Gaussian process: $f \sim \mbox{GP}(0, C)$ for some covariance function $C$.  Let $x_1, \ldots, x_N$ denote the previously observed $x$ points.  Derive the posterior distribution for the random vector $[f(x_1), \ldots, f(x_N)]^T$, given the corresponding outcomes $y_1, \ldots, y_N$, assuming that you know $\sigma^2$.  (Use your lemma!)
+\item Suppose we observe data $y_i = f(x_i) + \epsilon_i$, $\epsilon_i \sim N(0, \sigma^2)$, for some unknown function $f$. Suppose that the prior distribution for the unknown function is a mean-zero Gaussian process: $f \sim \mbox{GP}(0, C)$ for some covariance function $C$.  Let $x_1, \ldots, x_N$ denote the previously observed $x$ points.  Derive the posterior distribution for the random vector $[f(x_1), \ldots, f(x_N)]^T$, given the corresponding outcomes $y_1, \ldots, y_N$, assuming that you know $\sigma^2$.
 
 \item As before, suppose we observe data $y_i = f(x_i) + \epsilon_i$, $\epsilon_i \sim N(0, \sigma^2)$, for $i=1, \ldots, N$.  Now we wish to predict the value of the function $f(x^{\star})$ at some new point $x^{\star}$ where we haven't seen previous data.  Suppose that $f$ has a mean-zero Gaussian process prior, $f \sim GP(0, C)$.  Show that the posterior mean $E\{ f(x^{\star}) \mid y_1, \ldots, y_N \}$ is a linear smoother, and derive expressions both for the smoothing weights and the posterior variance of $f(x^{\star})$.
 
 \item Go back to the utilities data, and plot the pointwise posterior mean and 95\% posterior confidence interval for the value of the function at each of the observed points $x_i$ (again, superimposed on top of the scatter plot of the data itself).  Choose $\tau^2_2$ to be very small, say $10^{-6}$, and choose $(b, \tau^2_1)$ that give a sensible-looking answer.  
+
+\item Let $y_i = f(x_i) + \epsilon_i$, and suppose that $f$ has a Gaussian-process prior under the squared-exponential covariance function $C$ with scale $\tau^1_2$, range $b$, and nugget $\tau^2_2$.  Derive an expression for the marginal distribution of $y = (y_1 \ldots, y_N)$ in terms of $(\tau^1, b, \tau^2_2)$, integrating out the random function $f$.  This is called a marginal likelihood.
+
+\item Return to the utilities data.  Fix $\tau^2_2 = 0$, and evaluate the marginal likelihood function $p(y \mid \tau^2_1, b)$ over a discrete 2-d grid of points.  If you're getting errors in your code with $\tau^2_2 = 0$, use something very small instead.  Use this plot to choose a set of values $(\hat{\tau^2_1}, \hat{b})$ for the hyperparameters.  Then use these hyperparameters to compute the posterior mean for $f$, given $y$.
 
 \end{enumerate}
 
