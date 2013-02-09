@@ -108,6 +108,13 @@ Suppose that the joint distribution of two vectors $y$ and $\theta$ has the foll
 
 The question of interest is: how does each gene's expression profile change over time, as the process of embryogenesis unfolds?  Propose a hierarchical model for this data that properly reflects its structure.
 
+A nice graphics package is the ``lattice'' library.  Install and load this; then try commands such as
+\begin{verbatim}
+xyplot(log2exp~time | gene, data=droslong)
+xyplot(log2exp~time | group, data=droslong)
+\end{verbatim}
+to begin exploring the structure of this data.
+
 \end{enumerate}
 
 

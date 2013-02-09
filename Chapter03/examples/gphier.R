@@ -66,6 +66,6 @@ drosmelt$time = sort(rep(1:12,14))
 drosmelt$replicate = c(rep("A", 168), rep("B", 168), rep("C", 168))
 
 xyplot(log2exp~time | gene, data=drosmelt)
-
+xyplot(log2exp~time | group, data=drosmelt)
 
 write.csv(drosmelt, "droslong.csv", quote=FALSE, row.names=FALSE)
