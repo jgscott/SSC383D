@@ -31,8 +31,11 @@ uniformKernel <- Vectorize(function(x) {
 # Because of Vectorize(), the fit function can take a vector of xs and return
 # a vector of predicted ys.
 fitKernelSmoother <- function(xs, ys, h, kernel) {
+  force(xs)
+  force(ys)
   Vectorize(function(x) {
-    sum(weight(xs, x, h, kernel) * ys) / sum(weight(xs, x, h, kernel))
+    tmp <- weight(xs, x, h, kernel)
+    sum(tmp * ys) / sum(tmp)
   })
 }
 
@@ -49,4 +52,15 @@ crossValidate <- function(training, testing, hs, kernel) {
     errs <- c(errs, mse)
   }
   cbind(hs, errs)
+}
+
+# Leave-out-one cross validation. Returns the mean squared error of the
+# prediction vs. the left-out point, for all points in the dataset.
+loocv <- function(data, hs, kernel) {
+  errs = c()
+  for (i in 1:nrow(data)) {
+    e = crossValidate(data[-i,], t(as.matrix(data[i,])), hs, kernel)
+    errs <- cbind(errs, e[,2])
+  }
+  cbind(hs, rowMeans(errs))
 }
