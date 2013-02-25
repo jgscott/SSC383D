@@ -1,0 +1,96 @@
+  \documentclass{mynotes}
+
+%\geometry{showframe}% for debugging purposes -- displays the margins
+
+\newcommand{\E}{\mbox{E}}
+\newcommand{\MSE}{\mbox{MSE}}
+\newcommand{\var}{\mbox{var}}
+
+
+\usepackage{amsmath}
+%\usepackage[garamond]{mathdesign}
+\usepackage{url}
+
+% Set up the images/graphics package
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+
+\title[Exercises 5 $\cdot$ SSC 383D]{Exercises 5: Hierarchical models and data augmentation}
+%\author[ ]{ }
+\date{}  % if the \date{} command is left out, the current date will be used
+
+% The following package makes prettier tables.  We're all about the bling!
+\usepackage{booktabs}
+
+% The units package provides nice, non-stacked fractions and better spacing
+% for units.
+\usepackage{units}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+% Small sections of multiple columns
+\usepackage{multicol}
+
+% Provides paragraphs of dummy text
+\usepackage{lipsum}
+
+% These commands are used to pretty-print LaTeX commands
+\newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+\newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+\newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+\newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+\newcommand{\docenv}[1]{\textsf{#1}}% environment name
+\newcommand{\docpkg}[1]{\texttt{#1}}% package name
+\newcommand{\doccls}[1]{\texttt{#1}}% document class name
+\newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+
+\newcommand{\N}{\mbox{N}}
+\newcommand{\thetahat}{\hat{\theta}}
+\newcommand{\sigmahat}{\hat{\sigma}}
+\newcommand{\betahat}{\hat{\beta}}
+
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{Hierarchical models and shrinkage}
+
+The data set in ``mathtest.csv'' shows the scores on a standardized math test from a sample of 10th-grade students at 100 different U.S.~urban high schools, all having enrollment of at least 400 10th-grade students.  (A lot of educational research involves ``survey tests'' of this sort, with tests administered to all students being the rare exception.)
+
+Let $\theta_i$ be the underlying mean test score for school $i$, and let $y_{ij}$ be the score for the $j$th student in school $i$.  Starting with the ``mathtest.R'' script, you'll notice that the extreme school-level averages $\bar{y}_i$ (both high and low) tend to be at schools where fewer students were sampled.
+
+\begin{enumerate}
+\item Explain briefly why this would be.
+\item Fit a normal hierarchical model to these data via Gibbs sampling:
+\begin{eqnarray*}
+y_{ij} &\sim& \mbox{N}(\theta_i, \sigma^2) \\
+\theta_i &\sim& \mbox{N}(\mu, \tau^2) \\ 
+\end{eqnarray*}
+Decide upon sensible priors for the unknown model parameters $(\mu, \sigma^2, \tau^2)$.
+
+\item Suppose you use the posterior mean $\hat{\theta}_i$ from the above model to estimate each school-level mean $\theta_i$.  Define the shrinkage coefficient $\kappa_i$ as
+$$
+\kappa_i = \frac{ \bar{y}_i - \hat{\theta}_i}{\bar{y}_i} \, ,
+$$
+which tells you how much the posterior mean shrinks the observed sample mean.  Plot this shrinkage coefficient for each school as a function of that school's sample size, and comment.
+
+\end{enumerate}
+
+\section{Data augmentation}
+
+Read the following paper:
+\begin{quotation}
+``Bayesian Analysis of Binary and Polychotomous Response Data.''  James H. Albert and Siddhartha Chib.  \textit{Journal of the American Statistical Association}, Vol.~88, No.~422 (Jun.,~1993), pp.~669-679
+\end{quotation}
+
+The surefire way to get this paper is via access to JStor through the UT Library.  (I have no comment on whether others might have sneakily posted copies of the PDF on the open web.)
+
+This paper describes a Bayesian treatment of probit regression (similar to logistic regression) using the trick of \textit{data augmentation}---that is, introducing ``latent variables'' that turn a hard problem into a much easier one.
+
+\end{document}
+
