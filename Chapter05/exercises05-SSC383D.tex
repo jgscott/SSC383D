@@ -16,7 +16,7 @@
 \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
 \graphicspath{{graphics/}}
 
-\title[Exercises 5 $\cdot$ SSC 383D]{Exercises 5: Hierarchical models and data augmentation}
+\title[Exercises 5 $\cdot$ SSC 383D]{Exercises 5: Hierarchy and data augmentation}
 %\author[ ]{ }
 \date{}  % if the \date{} command is left out, the current date will be used
 
@@ -87,10 +87,20 @@ Read the following paper:
 \begin{quotation}
 ``Bayesian Analysis of Binary and Polychotomous Response Data.''  James H. Albert and Siddhartha Chib.  \textit{Journal of the American Statistical Association}, Vol.~88, No.~422 (Jun.,~1993), pp.~669-679
 \end{quotation}
+The surefire way to get this paper is via access to JStor through the UT Library website.  Let me know if this is an issue for you.
 
-The surefire way to get this paper is via access to JStor through the UT Library.  (I have no comment on whether others might have sneakily posted copies of the PDF on the open web.)
+The paper describes a Bayesian treatment of probit regression (similar to logistic regression) using the trick of \textit{data augmentation}---that is, introducing ``latent variables'' that turn a hard problem into a much easier one.  Briefly summarize your understanding of the key trick proposed by this paper.  Then see you if you can apply the trick in the following context, which is more complex than ordinary probit regression.
 
-This paper describes a Bayesian treatment of probit regression (similar to logistic regression) using the trick of \textit{data augmentation}---that is, introducing ``latent variables'' that turn a hard problem into a much easier one.
+In ``polls.csv'' you will find the results of several political polls from the 1988 U.S.~presidential election.  The outcome of interest is whether someone plans to vote for George Bush (senior, not junior).  There are several potentially relevant demographic predictors here, including the respondent's state of residence.  The goal is to understand how these relate to the probability that someone will support Bush in the election.  You can imagine this information would help a great deal in poll re-weighting and aggregation (ala Nate Silver).
+
+Use Gibbs sampling, together with the Albert and Chib trick, to fit a hierarchical probit model of the following form:
+\begin{eqnarray*}
+\mbox{Pr}(y_{ij} = 1) &=& \Phi(z_{ij})  \\
+z_{ij} &=& \mu_i + x_{ij}^T \beta \, .
+\end{eqnarray*}
+Here $y_{ij}$ is the response (Bush=1, other=0) for respondent $j$ in state $i$; $\Phi(\cdot)$ is the probit link function, i.e.~the CDF of the standard normal distribution; $\mu_i$ is a state-level intercept term; $x_{ij}$ is a vector of respondent-level demographic predictors; and $\beta$ is a vector of state-invariant regression coefficients.
+
+Note: there are severe imbalances among the states in terms of numbers of survey respondents!  Following the last problem, the key is to impose a hierarchical prior on the state-level intercepts.
 
 \end{document}
 
