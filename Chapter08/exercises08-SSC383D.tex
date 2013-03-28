@@ -1,0 +1,122 @@
+  \documentclass{mynotes}
+
+%\geometry{showframe}% for debugging purposes -- displays the margins
+
+\newcommand{\E}{\mbox{E}}
+\newcommand{\MSE}{\mbox{MSE}}
+\newcommand{\var}{\mbox{var}}
+
+
+\usepackage{amsmath}
+%\usepackage[garamond]{mathdesign}
+\usepackage{url}
+
+% Set up the images/graphics package
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+
+\title[Exercises 8 $\cdot$ SSC 383D]{Exercises 8: Spatial models}
+%\author[ ]{ }
+\date{}  % if the \date{} command is left out, the current date will be used
+
+% The following package makes prettier tables.  We're all about the bling!
+\usepackage{booktabs}
+
+% The units package provides nice, non-stacked fractions and better spacing
+% for units.
+\usepackage{units}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+% Small sections of multiple columns
+\usepackage{multicol}
+
+% Provides paragraphs of dummy text
+\usepackage{lipsum}
+
+% These commands are used to pretty-print LaTeX commands
+\newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+\newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+\newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+\newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+\newcommand{\docenv}[1]{\textsf{#1}}% environment name
+\newcommand{\docpkg}[1]{\texttt{#1}}% package name
+\newcommand{\doccls}[1]{\texttt{#1}}% document class name
+\newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+
+\newcommand{\N}{\mbox{N}}
+\newcommand{\thetahat}{\hat{\theta}}
+\newcommand{\sigmahat}{\hat{\sigma}}
+\newcommand{\betahat}{\hat{\beta}}
+
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\section{A spatial probit model}
+
+In ``katrina.csv'' you have data on 673 businesses in downtown New Orleans.  Your goal is to model how quickly these businesses re-opened in the wake of Hurricane Katrina, as a function both of known regressors and unknown spatial variation.  The data is from LeSage et.~al. (2011).\footnote{J. P. LeSage, R. K. Pace, N. Lam, R. Campanella and X. Liu (2011), New Orleans business recovery in the aftermath of Hurricane Katrina, Journal of the Royal Statistical Society A, 174, 1007--27}  The variable codes were taken straight from the journal website\footnote{\url{http://www.blackwellpublishing.com/rss/Volumes/Av174p4.htm}} and are as follows.
+
+\vspace{\baselineskip}
+
+\begin{compactdesc}
+\item[long] longitude coordinate of store
+
+\item[lat]
+latitude coordinate of store
+
+\item[flooddepth]
+flood depth (measured in feet)
+
+\item[logmedinc]
+log median income
+
+\item[smallsize]
+binary variable for ``small size'' firms
+
+\item[largesize]
+binary variable for ``large size'' firms
+
+\item[lowstatuscustomers]
+binary; low socio-economic status of clientele
+
+\item[highstatuscustomers]
+binary; high socio-economic status of clientele
+
+\item[owntypesoleproprietor]
+binary; indicates ``sole proprietor'' ownership type
+
+\item[owntypenationalchain]
+binary; indicates ``national chain'' ownership type
+
+\item[y1]
+reopening status in the very short period 0-3 months; 1=reopened, 0=not
+
+\item[y2]
+reopening status in the period 0-6 months; 1=reopened, 0=not
+
+\item[y3]
+reopening status in the period 0-12 months; 1=reopened, 0=not
+
+\item[street]
+which of three streets the shop is on
+
+\end{compactdesc}
+
+\vspace{\baselineskip}
+
+If you install the R library ``ggmap'' and its dependencies, then you'll be able to visualize the data on a Google map:
+\begin{verbatim}
+qmplot(long, lat, data = katrina, maptype="roadmap", source="google")
+\end{verbatim}
+
+Fit a probit model for re-opening status, choosing one of 3, 6, or 12 months as the threshold defining your binary outcome (or model them all separately).  Incorporate relevant regressors in your model, as well as spatial correlation.  Think carefully about the spatial structure.  You'll notice that the shops fall on three separate streets; thus you might treat spatial covariation within a single street as independent of spatial covariation across streets.  Within a street, you might think about Gaussian processes to model a spatial ``intensity of re-opening'' function.  You could also consider autoregressive models, with ``nearest neighbor'' effects.  If you'd like a reference on Bayesian spatial modeling, consider the classic paper by Diggle et.~al.~on model-based geostatistics.\footnote{\url{http://www.isds.duke.edu/~fei/samsi/Readings/DiggTawnMoye1988.pdf}}
+
+
+\end{document}
+
