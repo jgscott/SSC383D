@@ -1,0 +1,84 @@
+\documentclass[12pt]{article}
+\usepackage[left=1.5in,top=1.25in,right=1.5in,bottom=1.25in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{amsthm}
+\usepackage{epsfig}
+\usepackage[round]{natbib}
+\usepackage{clrscode}
+\usepackage{setspace}
+\usepackage{multirow}
+
+\newcommand{\logit}{\mbox{logit}}
+\newcommand{\probit}{\mbox{probit}}
+\newcommand{\hiw}{\mbox{HIW}}
+\newcommand{\N}{\mbox{N}}
+\newcommand{\U}{\mbox{Unif}}
+\newcommand{\C}{\mbox{C}}
+\newcommand{\Be}{\mbox{Be}}
+\newcommand{\dd}{\mbox{d}}
+\newcommand{\IG}{\mbox{IG}}
+\newcommand{\Po}{\mbox{Po}}
+\newcommand{\DP}{\mbox{DP}}
+\newcommand{\AR}{\mbox{AR}}
+\newcommand{\GP}{\mbox{GP}}
+\newcommand{\DE}{\mbox{DE}}
+\newcommand{\Ex}{\mbox{Ex}}
+\newcommand{\E}{\mbox{E}}
+\newcommand{\Var}{\mbox{Var}}
+\newcommand{\lp}{\mathit{l}^{\alpha}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\Pois}{\mbox{\textsc{Pois}}}
+\newcommand{\Ne}{\mbox{\textsc{Ne}}}
+
+
+\newtheorem{theorem}{Theorem}[section]
+
+\newenvironment{example}[1][Example]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+\newenvironment{remark}[1][Remark]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+\title{Scribbles on Gibbs distributions and Markov random fields}
+
+%\author{James Scott}
+%\date{February 2013}
+
+\singlespacing
+
+\begin{document}
+
+\maketitle
+
+\section{Markov random fields}
+
+Let $y = (y_1, \ldots, y_n)$ be a random vector with elements $y_i$.  Define $\Ne(i) \subset \{1, \ldots, i-1, i+1, \ldots n\}$ to be the subset of indices such that, for all $i$, the conditional distribution for $y_i$ may be written as
+\begin{equation}
+\label{eqn:MRF}
+p(y_i \mid y_{(-i)} = p(y_i \mid y_j: j \neq i) = p(y_i \mid y_j: j \in \Ne(i)) \, .
+\end{equation}
+Clearly specifying $\Ne(i)$ for all $i$ species a network or graph.  The image here is of each element of the random vector as a node in this network, and $\Ne(i)$ is the set of neighboring nodes.  The neighborhood set $\Ne(i)$ is often called the Markov blanket of node $i$.
+
+A joint probability distribution specified in this manner is called a \textit{Markov random field}.  Clearly not all forms for the conditionals in (\ref{eqn:MRF}) lead to a valid joint probability distribution.  The interesting question is: which ones do?
+
+\section{Gibbs distributions}
+
+An important idea in understanding Gibbs distributions is that of a clique.  A clique is a set $C$ of nodes in a network such that every node in $C$ is a neighbor of every other node in $C$.  A potential function $\phi_d$ of order $d$ is a function of $d$ arguments that is invariant to permutations of those arguments.  For example, $\phi_2(y_1, y_2) = y_1 y_2$ is a potential function. (Note: in some presentations of these ideas potential functions are defined as being strictly positive.  I will not adopt that restriction.)
+
+A \textit{Gibbs distribution} is a probability distribution over $y$ that depends on the $y_1, \ldots, y_n$ only through potentials on cliques.  Specifically,
+$$
+p(y) = p(y_1, \ldots, y_n) \propto \exp \left\{ d \sum_{j=1}^n \sum_{a \in \mathcal{A}_j} \phi_{k}(y_{a_1}, \ldots, y_{a_j}) \right\} \, ,
+$$
+where $\mathcal{A}_j$ is the set of all subsets of $\{1, \ldots, n\}$ of size $j$.
+
+Loosely speaking, the Hammersley--Clifford theorem states that if Equation (\ref{eqn:MRF}) defines a valid joint probability distribution, then this distribution must be a Gibbs distribution.
+%
+%\bibliographystyle{abbrvnat}
+%\bibliography{masterbib}
+
+\end{document}
+
+
