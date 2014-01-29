@@ -192,7 +192,6 @@ Left unanswered so far in our previous study of kernel regression is the questio
 
 \begin{enumerate}[(A)]
 
-\item Why not just choose $h$ to minimize the sum of squared errors for the observed data set?
 
 \item  What if you had a fresh data set where you could test your predictions arising from fitting the model to the first data set, with particular choices of $h$?  Presumably a good choice of $h$ would be one that led to smaller predictive errors.  This is called \textit{out-of-sample predictive validation}.
 
@@ -204,7 +203,7 @@ L_n(\hat{f}) = \frac{1}{n}\sum_{i=1}^{n^{\star}} (y^{\star}_i - \hat{y}_i^{\star
 $$
 where $(y_i^{\star}, x_i^{\star})$ are the points in the test set, and $ \hat{y}_i^{\star}$ is your predicted value arising from the model you fit using only the training data.  Does your out-of-sample predictive validation method lead to reasonable choices of $h$ for each case?
 
-\item Splitting a data set into two chunks to choose $h$ by out-of-sample validation has some drawbacks.  List at least two.  Then consider an alternative: leave-one-out cross validation.  Define
+\item (optional problem, except for statistics students) Splitting a data set into two chunks to choose $h$ by out-of-sample validation has some drawbacks.  List at least two.  Then consider an alternative: leave-one-out cross validation.  Define
 $$
 \mbox{LOOCV} = \sum_{i=1}^n \left( y_i - \hat{y}_{i}^{(-i)} \right)^2 \, ,
 $$
@@ -242,25 +241,37 @@ for some vector of coefficients $a = (a_0, \ldots, a_D)$.  As above, we will est
 $$
 \hat{a} = \arg \min_{R^{D+1}} \sum_{i=1}^n w_i \left\{ y_i - g_{x}(x_i; a)  \right\}^2 \, ,
 $$
-where $w_i \equiv w(x_i, x)$ are the kernel weights defined just above, normalized to sum to one.\footnote{We are fitting a different polynomial function for every possible choice of $x$.  Thus $\hat{a}$ depends on the target point $x$, but we have suppressed this dependence for notational ease.} Derive a concise (matrix) form of the weight vector $\hat{a}$, and by extension, the local function estimate $\hat{f}(x)$ at the target value $x$.\footnote{Observe that at $x$, $g_x(u; a) = a_0$.}   Life will be easier if you define the matrix $R_x$ whose $(i,j)$ entry is $(x_i-x)^{j-1}$, and remember that (weighted) polynomial regression is the same thing as (weighted) linear regression with a polynomial basis.
+where $w_i \equiv w(x_i, x)$ are the kernel weights defined just above, normalized to sum to one.\footnote{We are fitting a different polynomial function for every possible choice of $x$.  Thus $\hat{a}$ depends on the target point $x$, but we have suppressed this dependence for notational ease.} Derive a concise (matrix) form of the weight vector $\hat{a}$, and by extension, the local function estimate $\hat{f}(x)$ at the target value $x$.\footnote{Observe that at the target point $x$, $g_x(u = x; a) = a_0$.  That is, only the constant term appears.  But this is not the same thing as fitting only a constant term!}   Life will be easier if you define the matrix $R_x$ whose $(i,j)$ entry is $(x_i-x)^{j-1}$, and remember that (weighted) polynomial regression is the same thing as (weighted) linear regression with a polynomial basis.
+
+Note: if you get bogged down doing the general polynomial case, just try the linear case.
 
 \item From this, conclude that for the special case of the local linear estimator ($D=1$), we can write $\hat{f}(x)$ as a linear smoother of the form
 $$
-\hat{f}(x) = \frac{\sum_{i=1}^n w_i y_i }{\sum_{i=1}^n w_i} \, ,
+\hat{f}(x) = \frac{\sum_{i=1}^n w_i(x) y_i }{\sum_{i=1}^n w_i(x)} \, ,
 $$
 where the unnormalized weights are
 \begin{eqnarray*}
-w_i &=& K \left( \frac{x-x_i}{h} \right) \left\{  s_2(x) - (x_i-x) s_1(x) \right\}\\
+w_i(x) &=& K \left( \frac{x-x_i}{h} \right) \left\{  s_2(x) - (x_i-x) s_1(x) \right\}\\
 s_j(x) &=& \sum_{i=1}^n K \left( \frac{x-x_i}{h} \right) (x_i-x)^j \, .
 \end{eqnarray*}
 
-\item What are the mean and variance of the sampling distribution for the local polynomial estimate $\hat{f}(x)$?  (Again, this is just a scalar quantity at $x$, not the whole function.)
+\item Suppose that the residuals have constant variance $\sigma^2$ (that is, the spread of the residuals does not depend on $x$).  Derive the mean and variance of the sampling distribution for the local polynomial estimate $\hat{f}(x)$ at some arbitrary point $x$.  Note: the random variable $\hat{f}(x)$ is just a scalar quantity at $x$, not the whole function.
 
-\item Write a new R function that fits the local linear estimator using a Gaussian kernel for a specified choice of bandwidth $h$. Then load the data in ``utilities.csv'' into R.  This data set shows the monthly gas bill (in dollars) for a single-family home in Minnesota, along with the average temperature in that month (in degrees F), and the number of billing days in that month.  Let $y$ be the average daily gas bill in a given month (i.e.~dollars divided by billing days), and let $x$ be the average temperature.  Fit $y$ versus $x$ using both the kernel-regression (locally constant) and local linear methods using a Gaussian kernel.  In each case, choose a bandwidth by leave-one-out cross-validation.
+\item We don't know the residual variance, but we can estimate it.  A basic fact is that if $x$ is a random vector with mean $\mu$ and covariance matrix $\Sigma$, then for any symmetric matrix $Q$ of appropriate dimension, the quadratic form $x^T Q x$ has expectation
+$$
+E(x^T Q x) = \mbox{tr}(Q \Sigma) + \mu^T Q \mu \, .
+$$
+Write the vector of residuals as $r = y - \hat{y} = y - Hy$, where $H$ is the smoothing matrix.  Compute the expected value of the estimator
+$$
+\hat{\sigma}^2 = \frac{\Vert r \Vert_2^2}{n - 2\mbox{tr}(H) + \mbox{tr}(H^T H)} \, ,
+$$
+and simplify things as much as possible.  Roughly under what circumstances will this estimator be nearly unbiased for large $n$?  Note: the quantity $2\mbox{tr}(H) - \mbox{tr}(H^T H)$ is often referred to as the ``effective degrees of freedom'' in such problems.
 
-Inspect the results of the models you just fit, paying careful attention to the fit at the far-left and far-right ends of the $x$ axis.  Do you see a reason a prefer one method to the other?
+\item Write a new R function that fits the local linear estimator using a Gaussian kernel for a specified choice of bandwidth $h$. Then load the data in ``utilities.csv'' into R.\footnote{On the class GitHub site, under the ``examples'' directory in Section 2.}  This data set shows the monthly gas bill (in dollars) for a single-family home in Minnesota, along with the average temperature in that month (in degrees F), and the number of billing days in that month.  Let $y$ be the average daily gas bill in a given month (i.e.~dollars divided by billing days), and let $x$ be the average temperature.  Fit $y$ versus $x$ using local linear regression and some choice of kernel.  Choose a bandwidth by leave-one-out cross-validation.
 
-\item Use the results of Part D to construct an approximate point-wise 95\% confidence interval for the local linear model (using your chosen bandwidth) for the value of the function at each of the observed points $x_i$ for the utilities data.  Plot these confidence bands, along with the estimated function, on top of a scatter plot of the data.
+\item Inspect the residuals from the model you just fit.  Does the assumption of constant variance (homoscedasticity) look reasonable?  If not, do you have any suggestion for fixing it?
+
+\item Put everything together to construct an approximate point-wise 95\% confidence interval for the local linear model (using your chosen bandwidth) for the value of the function at each of the observed points $x_i$ for the utilities data.  Plot these confidence bands, along with the estimated function, on top of a scatter plot of the data.
 
 \end{enumerate}
 
