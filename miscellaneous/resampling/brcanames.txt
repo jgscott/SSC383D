@@ -1,0 +1,17 @@
+Col 1 -- radiologist ID (1--999)
+Col 2 -- cancer outcome (1=Cancer, 0=Normal)
+Col 3 -- recall outcome (1=Y 0=N)
+Col 4 -- intercept (always 1)
+Col 5 -- patient age 50-59 (the referent is patient age is 40-49)
+Col 6 -- patient age 60-69
+Col 7 -- patient age 70+
+Col 8 -- family history of breast cancer (1=Y 0=N)
+Col 9 -- history of breast biopsy/surgery (1=Y 0=N)
+Col 10 -- breast cancer symptoms (lump/nipple discharge; 1=Y 0=N)
+Col 11 -- pre-menopause (referent is post menopause with hormone treatment)
+Col 12 -- post-menopause, no hormone treatment
+Col 13 -- post-menopause, unknown hormone treatment
+Col 14 -- patient had a previous mammogram
+Col 15 -- breast density 1 (breast density 2 is the referent)
+Col 16 -- breast density 3
+Col 17 -- breast density 4
