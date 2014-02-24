@@ -60,6 +60,8 @@
 
 \section{Hierarchical models and shrinkage}
 
+\subsection{Math tests}
+
 The data set in ``mathtest.csv'' shows the scores on a standardized math test from a sample of 10th-grade students at 100 different U.S.~urban high schools, all having enrollment of at least 400 10th-grade students.  (A lot of educational research involves ``survey tests'' of this sort, with tests administered to all students being the rare exception.)
 
 Let $\theta_i$ be the underlying mean test score for school $i$, and let $y_{ij}$ be the score for the $j$th student in school $i$.  Starting with the ``mathtest.R'' script, you'll notice that the extreme school-level averages $\bar{y}_i$ (both high and low) tend to be at schools where fewer students were sampled.
@@ -69,7 +71,7 @@ Let $\theta_i$ be the underlying mean test score for school $i$, and let $y_{ij}
 \item Fit a normal hierarchical model to these data via Gibbs sampling:
 \begin{eqnarray*}
 y_{ij} &\sim& \mbox{N}(\theta_i, \sigma^2) \\
-\theta_i &\sim& \mbox{N}(\mu, \tau^2) \\ 
+\theta_i &\sim& \mbox{N}(\mu, \tau^2)
 \end{eqnarray*}
 Decide upon sensible priors for the unknown model parameters $(\mu, \sigma^2, \tau^2)$.
 
@@ -80,6 +82,27 @@ $$
 which tells you how much the posterior mean shrinks the observed sample mean.  Plot this shrinkage coefficient for each school as a function of that school's sample size, and comment.
 
 \end{enumerate}
+
+\subsection{Price elasticity of demand}
+
+The data in ``cheese.csv'' are about sales volume, price, and advertisting display activity for packages of Borden sliced ``cheese.'' The data are taken from Rossi, Allenby, and McCulloch's textbook on \textit{Bayesian Statistics and Marketing.} For each of 88 stores (store) in different US cities, we have repeated observations of the weekly sales volume (vol, in terms of packages sold), unit price (price), and whether the product was advertised with an in-store display during that week (disp = 1 for display).
+
+Your goal is to estimate, on a store-by-store basis, the effect of display ads on the demand curve for cheese.  A standard form of a demand curve in economics is of the form $Q = \alpha P^\beta$, where $Q$ is quantity demanded (i.e.~sales volume), $P$ is price, and $\alpha$ and $\beta$ are parameters to be estimated.  You'll notice that this is linear on a log-log scale,
+$$
+\log P = \log \alpha + \beta \log Q \,
+$$
+which you should assume at least initially.  Economists would refer to $\beta$ as the price elasticity of demand (PED).  Notice that on a log-log scale, the errors enter multiplicatively.
+
+There are several things for you to consider in analyzing this data set.
+\begin{compactenum}
+\item The demand curve might shift (different $\alpha$) and also change shape (different $\beta$) depending on whether there is a display ad or not in the store.
+\item Different stores will have very different typical volumes, and your model should account for this.
+\item Do different stores have different PEDs?  If so, do you really want to estimate a separate, unrelated $\beta$ for each store?
+\item If there is an effect on the demand curve due to showing a display ad, does this effect differ store by store, or does it look relatively stable across stores?
+\item Once you build the best model you can using the log-log specification, do see you any evidence of major model mis-fit?
+\end{compactenum}
+Propose an appropriate hierarchical model that allows you to address these issues, and use Gibbs sampling to fit your model.
+
 
 \section{Data augmentation}
 

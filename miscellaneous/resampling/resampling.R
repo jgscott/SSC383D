@@ -6,6 +6,7 @@ heights = read.csv("heights.csv")
 plot(SHGT ~ MHGT, data=heights)
 
 lmM = lm(SHGT ~ MHGT, data=heights)
+abline(lmM)
 lmF = lm(SHGT ~ FHGT, data=heights)
 
 N = nrow(heights)
@@ -15,6 +16,8 @@ betasave = matrix(0, NMC, 2)
 for(i in 1:NMC) {
 	keep = sample(1:N, N, replace=TRUE)
 	lmstar = lm(SHGT ~ MHGT, data=heights[keep,])
+	#plot(SHGT ~ MHGT, data=heights[keep,], xlim=c(50,75), ylim= c(60,80))
+	#abline(lmstar)
 	betasave[i,] = coef(lmstar)
 }
 
@@ -64,7 +67,7 @@ for(i in 1:NMC) {
 	thetastar = mymax$par
 	plot(chym$Conc, ystar,ylim=c(1,2.1))
 	lines(rgrid, mmpredict(rgrid, exp(thetastar[1]), exp(thetastar[2])))
-	thetasave[i,] = theta
+	thetasave[i,] = thetastar
 }
 
 # Inspect the sampling distributions
@@ -73,7 +76,7 @@ hist(exp(thetasave[,2]))
 plot(Rate ~ Conc, data=chym)
 lines(rgrid, mmpredict(rgrid, exp(theta[1]), exp(theta[2])))
 
-
+apply(thetasave,2,sd)
 
 
 ## Parametric bootstrap
@@ -112,7 +115,16 @@ hist(betasave[,16],50)
 
 gardasil = read.csv('gardasil.csv')
 
-glm1 = glm(Completed ~ AgeGroup + InsuranceType, data=gardasil, family='binomial')
-glm2 = glm(Completed ~ AgeGroup + InsuranceType + Location, data=gardasil, family='binomial')
+lm1 = lm(Completed ~ AgeGroup + InsuranceType, data=gardasil)
+rsq1 = 1 - var(resid(lm1))/var(gardasil$Completed)
+glm2 = lm(Completed ~ AgeGroup + InsuranceType + Location, data=gardasil)
 
+NMC = 1000
+rsq = rep(0,NMC)
+for(i in 1:NMC) {
+	lm2 = lm(Completed ~ AgeGroup + InsuranceType + shuffle(Location), data=gardasil)
+	rsq[i] = 1 - var(resid(lm2))/var(gardasil$Completed) - rsq1
+}
+
+hist(rsq)
 
